@@ -4,24 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Teacher {
+public class Teacher extends Person{
     private static List<Teacher> allTeachers = new ArrayList<>();
-    private String firstName;
-    private String lastName;
-    private String id;
     private int numberOfLessons;
     private List<Course> courses = new ArrayList<>();
 
-    public Teacher(String firstName, String lastName, String id) throws DoublicateTeacherException {
-        if (!allTeachers.isEmpty()) {
-            for (Teacher i : allTeachers) {
-                if (id.equals(i.id))
-                    throw new DoublicateTeacherException();
-            }
-        }
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.id = id;
+    public Teacher(String firstName, String lastName, String username, String password, String id ) throws DoublicateException {
+        super(firstName,  lastName,  username,  password,  id , allTeachers);
         allTeachers.add(this);
     }
 
@@ -82,7 +71,7 @@ public class Teacher {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Teacher teacher = (Teacher) o;
-        return id.equals(teacher.id) && numberOfLessons == teacher.numberOfLessons && Objects.equals(firstName, teacher.firstName) && Objects.equals(lastName, teacher.lastName) && Objects.equals(courses, teacher.courses) && Objects.equals(id, teacher.lastName);
+        return getId().equals(teacher.getId()) && numberOfLessons == teacher.numberOfLessons && Objects.equals(getFirstName(), teacher.getFirstName()) && Objects.equals(getLastName(), teacher.getLastName()) && Objects.equals(courses, teacher.courses);
     }
 
     public void setExamCourse(int day, int month, int year, Course course) {
@@ -110,9 +99,9 @@ public class Teacher {
     @Override
     public String toString() {
         return "miniProject.Teacher{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", id=" + id +
+                "firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", id=" + getId() +
                 ", numberOfLessons=" + numberOfLessons +
                 "\n courses=" + courses +
                 '}';
@@ -130,11 +119,6 @@ public class Teacher {
     public static List<Teacher> getAllTeachers() {
         return allTeachers;
     }
-
-    public String getId() {
-        return this.id;
-    }
-
     public List<Course> getCourses() {
         return courses;
     }

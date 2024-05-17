@@ -26,3 +26,4 @@ class NotFindStudentIdException extends Exception {
 
 class DoublicateAssignmentException extends Exception {
 }
+class DoublicateException extends  Exception{}

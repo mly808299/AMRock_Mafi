@@ -2,26 +2,16 @@ package miniProject.src;
 
 import java.util.*;
 
-public class Student implements Comparable<Student> {
+public class Student extends Person
+        implements Comparable<Student> {
     private static List<Student> allStudents = new ArrayList<>();
-    private String firstName;
-    private String lastName;
-    private String id;
     private Map<Integer, Semester> semesters = new HashMap<>();
     private int numberOfCurrentSemester;
     private Double totalAverage = 0.0;
     private Double averageOfRegisteredSemester;
 
-    public Student(String firstName, String lastName, String id, int numberOfCurrentSemester) throws DoublicateStudentException {
-        if (!allStudents.isEmpty()) {
-            for (Student i : allStudents) {
-                if (id.equals(i.id))
-                    throw new DoublicateStudentException();
-            }
-        }
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.id = id;
+    public Student(String firstName, String lastName, String username, String password, String id, int numberOfCurrentSemester) throws DoublicateException {
+        super(firstName,  lastName,  username,  password,  id , allStudents);
         this.numberOfCurrentSemester = numberOfCurrentSemester;
         allStudents.add(this);
     }
@@ -59,7 +49,7 @@ public class Student implements Comparable<Student> {
 
     @Override
     public int compareTo(Student o) {
-        return this.firstName.compareTo(o.firstName);
+        return this.getFirstName().compareTo(o.getFirstName());
     }
 
     public String registeredCoursestoString() {
@@ -118,7 +108,7 @@ public class Student implements Comparable<Student> {
     }
 
     public String studentToString() {
-        return firstName + " " + lastName + " id:" + id + "\n";
+        return getFirstName() + " " + getLastName() + " id:" + getId() + "\n";
     }
 
     public void printStudent() {
@@ -138,7 +128,7 @@ public class Student implements Comparable<Student> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return Objects.equals(id, student.id) && numberOfCurrentSemester == student.numberOfCurrentSemester && Objects.equals(firstName, student.firstName) && Objects.equals(lastName, student.lastName) && Objects.equals(semesters, student.semesters) && Objects.equals(totalAverage, student.totalAverage) && Objects.equals(averageOfRegisteredSemester, student.averageOfRegisteredSemester);
+        return Objects.equals(getId(), student.getId()) && numberOfCurrentSemester == student.numberOfCurrentSemester && Objects.equals(getFirstName(), student.getFirstName()) && Objects.equals(getLastName(), student.getLastName()) && Objects.equals(semesters, student.semesters) && Objects.equals(totalAverage, student.totalAverage) && Objects.equals(averageOfRegisteredSemester, student.averageOfRegisteredSemester);
     }
 
     public void changeNumberOfCurrentSemester(int numberOfCurrentSemester) {
@@ -147,7 +137,7 @@ public class Student implements Comparable<Student> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, id, semesters, numberOfCurrentSemester, totalAverage, averageOfRegisteredSemester);
+        return Objects.hash(getFirstName(), getFirstName(), getId(), semesters, numberOfCurrentSemester, totalAverage, averageOfRegisteredSemester);
     }
 
     //getters and setters
@@ -161,11 +151,6 @@ public class Student implements Comparable<Student> {
         }
         throw new NotFindCurrentCourseException();
     }
-
-    public String getId() {
-        return id;
-    }
-
     public List<Course> getRegisteredCourses() {
         if (semesters.isEmpty())
             return null;

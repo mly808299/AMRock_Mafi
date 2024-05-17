@@ -66,6 +66,14 @@ public class Course {
             }
         }
     }
+    public void removeTeacher(Teacher teacher){
+        this.teacher = null;
+        for (Teacher i : Teacher.getAllTeachers()) {
+            if (i.getId().equals(teacher.getId()) ) {
+                teacher.removeCurseOfTeacher(this);
+            }
+        }
+    }
 
     public void setFinalExamDate(DateDeadLine finalExamDate) {
         this.finalExamDate = finalExamDate;
@@ -196,5 +204,9 @@ public class Course {
             registeredStudents.clear();
         }
         isActive = active;
+    }
+
+    public static List<Course> getAllCourses() {
+        return allCourses;
     }
 }
