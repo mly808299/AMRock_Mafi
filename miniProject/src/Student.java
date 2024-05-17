@@ -1,20 +1,22 @@
+package miniProject.src;
+
 import java.util.*;
 
 public class Student implements Comparable<Student> {
     private static List<Student> allStudents = new ArrayList<>();
     private String firstName;
     private String lastName;
-    private int id;
+    private String id;
     private Map<Integer, Semester> semesters = new HashMap<>();
     private int numberOfCurrentSemester;
     private Double totalAverage = 0.0;
     private Double averageOfRegisteredSemester;
 
-    public Student(Student firstName, String lastName, int id, int numberOfCurrentSemester) throws DoublicateStudentException {
+    public Student(String firstName, String lastName, String id, int numberOfCurrentSemester) throws DoublicateStudentException {
         if (!allStudents.isEmpty()) {
             for (Student i : allStudents) {
-                if (id == i.id)
-                    throw new  DoublicateStudentException();
+                if (id.equals(i.id))
+                    throw new DoublicateStudentException();
             }
         }
         this.firstName = firstName;
@@ -24,31 +26,32 @@ public class Student implements Comparable<Student> {
         allStudents.add(this);
     }
 
-    public void addCourses(Course newCourse, Integer numberOfSemester)  {
+    public void addCourses(Course newCourse, Integer numberOfSemester) {
         if (semesters.containsKey(numberOfSemester)) {
             semesters.get(numberOfSemester).addCourses(newCourse);
         } else {
             semesters.put(numberOfSemester, new Semester(newCourse));
         }
     }
-    public void removeCurses(Course removeCurse , Integer numberOfSemester) throws  NotFindCourseOfSemester {
+
+    public void removeCurses(Course removeCurse, Integer numberOfSemester) throws NotFindCourseOfSemester {
         semesters.get(numberOfSemester).removeCourse(removeCurse);
     }
 
-    public void calculateTotalAverageOfRegisteredSemester(){
+    public void calculateTotalAverageOfRegisteredSemester() {
         averageOfRegisteredSemester = semesters.get(this.numberOfCurrentSemester).getTotalAverage();
     }
 
     public void calculateTotalAverage() {
-        int size =0;
+        int size = 0;
         for (Semester i : semesters.values()) {
-            for(Double j:i.getScores().values()){
+            for (Double j : i.getScores().values()) {
                 totalAverage += j;
                 size++;
             }
         }
-        if(size ==0){
-            totalAverage =0.0;
+        if (size == 0) {
+            totalAverage = 0.0;
             return;
         }
         totalAverage = totalAverage / size;
@@ -68,10 +71,10 @@ public class Student implements Comparable<Student> {
     }
 
     public String cursesOfEachTermtoString(Integer termNumber) {
-        String stringCourses = new String();
+        String stringCourses = "";
         Iterator<Double> iteratorScore = semesters.get(termNumber).getScores().values().iterator();
-        if(semesters.get(termNumber).getCourses().isEmpty()){
-            return "There is no lesson for this term" +" "+termNumber +" "+ "yet.";
+        if (semesters.get(termNumber).getCourses().isEmpty()) {
+            return "There is no lesson for this term " + termNumber + " yet.";
         }
         for (Course i : semesters.get(termNumber).getCourses()) {
             Double score = iteratorScore.next();
@@ -88,12 +91,12 @@ public class Student implements Comparable<Student> {
         System.out.println(cursesOfEachTermtoString(termNumber));
     }
 
-    public Double registeredAveragetoDouble(){
+    public Double registeredAveragetoDouble() {
         calculateTotalAverageOfRegisteredSemester();
         return averageOfRegisteredSemester;
     }
 
-    public void printRegisteredAverage(){
+    public void printRegisteredAverage() {
         System.out.println(registeredAveragetoDouble());
     }
 
@@ -119,12 +122,14 @@ public class Student implements Comparable<Student> {
     }
 
     public void printStudent() {
-        System.out.println(firstName + " " + lastName + " id:" + id);
+        System.out.println(studentToString());
     }
-    public int numberOfCurrentCursesToInt(){
+
+    public int numberOfCurrentCursesToInt() {
         return semesters.get(this.numberOfCurrentSemester).getNumberOfCourses();
     }
-    public void printNumberOfCurrentCurses(){
+
+    public void printNumberOfCurrentCurses() {
         System.out.println(numberOfCurrentCursesToInt());
     }
 
@@ -133,9 +138,19 @@ public class Student implements Comparable<Student> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return id == student.id && numberOfCurrentSemester == student.numberOfCurrentSemester && Objects.equals(firstName, student.firstName) && Objects.equals(lastName, student.lastName) && Objects.equals(semesters, student.semesters) && Objects.equals(totalAverage, student.totalAverage) && Objects.equals(averageOfRegisteredSemester, student.averageOfRegisteredSemester);
+        return Objects.equals(id, student.id) && numberOfCurrentSemester == student.numberOfCurrentSemester && Objects.equals(firstName, student.firstName) && Objects.equals(lastName, student.lastName) && Objects.equals(semesters, student.semesters) && Objects.equals(totalAverage, student.totalAverage) && Objects.equals(averageOfRegisteredSemester, student.averageOfRegisteredSemester);
     }
 
+    public void changeNumberOfCurrentSemester(int numberOfCurrentSemester) {
+        this.numberOfCurrentSemester = numberOfCurrentSemester;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, id, semesters, numberOfCurrentSemester, totalAverage, averageOfRegisteredSemester);
+    }
+
+    //getters and setters
     public Double getCourseScore(Course courseFinder) throws NotFindCurrentCourseException {
         for (Semester i : semesters.values()) {
             for (Integer j : i.getScores().keySet()) {
@@ -147,12 +162,12 @@ public class Student implements Comparable<Student> {
         throw new NotFindCurrentCourseException();
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     public List<Course> getRegisteredCourses() {
-        if(semesters.isEmpty())
+        if (semesters.isEmpty())
             return null;
         return semesters.get(this.numberOfCurrentSemester).getCourses();
     }
@@ -173,94 +188,4 @@ public class Student implements Comparable<Student> {
     public int getNumberOfCurrentSemester() {
         return numberOfCurrentSemester;
     }
-
-    public void changeNumberOfCurrentSemester(int numberOfCurrentSemester) {
-        this.numberOfCurrentSemester = numberOfCurrentSemester;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName, id, semesters, numberOfCurrentSemester, totalAverage, averageOfRegisteredSemester);
-    }
-}
-
-class Semester {
-    private int numberOfCourses;
-    private int numberOfUnits;
-    private List<Course> courses = new ArrayList<>();
-    private Map<Integer , Double> scores = new HashMap<>();
-    private Double totalAverage;
-
-    public Map<Integer, Double> getScores() {
-        return scores;
-    }
-
-    public Semester(Course newCourse) {
-        this.courses.add(newCourse);
-        this.scores.put(newCourse.getCourseCode() , null);
-        numberOfCourses++;
-        this.numberOfUnits += newCourse.getUnit();
-    }
-
-    public void addCourses(Course newCurse) {
-        courses.add(newCurse);
-        this.scores.put(newCurse.getCourseCode() , null);
-        numberOfCourses++;
-        this.numberOfUnits += newCurse.getUnit();
-        calculateTotalAverageOfRegisteredSemester();
-    }
-    public void removeCourse(Course removeCourse) throws NotFindCourseOfSemester {
-        if(!courses.contains(removeCourse)){
-            throw new NotFindCourseOfSemester();
-        }
-        courses.remove(removeCourse);
-        scores.remove(removeCourse.getCourseCode());
-        numberOfCourses--;
-        this.numberOfUnits -= removeCourse.getUnit();
-        calculateTotalAverageOfRegisteredSemester();
-    }
-
-    public int getNumberOfCourses() {
-        return numberOfCourses;
-    }
-
-    public int getNumberOfUnits() {
-        return numberOfUnits;
-    }
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public Double getTotalAverage() {
-        calculateTotalAverageOfRegisteredSemester();
-        return totalAverage;
-    }
-
-    public void calculateTotalAverageOfRegisteredSemester() {
-        Double newTotalAverage = 0.0;
-        for (Double i : scores.values()) {
-            if (i != null) {
-                newTotalAverage += i;
-            }
-        }
-        if(courses.isEmpty()){
-            totalAverage =0.0;
-            return;
-        }
-        totalAverage = newTotalAverage / courses.size();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Semester semester = (Semester) o;
-        return numberOfCourses == semester.numberOfCourses && numberOfUnits == semester.numberOfUnits && Objects.equals(courses, semester.courses) && Objects.equals(totalAverage, semester.totalAverage);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(numberOfCourses, numberOfUnits, courses, totalAverage);
-    }
-
 }

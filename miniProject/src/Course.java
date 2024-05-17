@@ -1,3 +1,5 @@
+package miniProject.src;
+
 import java.util.*;
 import java.util.List;
 
@@ -14,7 +16,7 @@ class DateDeadLine {
 
     @Override
     public String toString() {
-        return  day +
+        return day +
                 "/" + month +
                 "/" + year;
     }
@@ -26,7 +28,7 @@ public class Course {
     private Teacher teacher;
     private int courseCode;
     private List<Student> registeredStudents = new ArrayList<>();
-    private int studentsNumber;
+    private int numberOfStudents;
     private boolean isActive;
     private List<Assignment> assignments = new ArrayList<>();
     private int assignmentsNumber;
@@ -53,18 +55,13 @@ public class Course {
 
     public Course(String courseName, Teacher teacher, int unit, boolean isActive, int courseCode) throws DoublicateCourseException {
         this(courseName, unit, isActive, courseCode);
-        this.teacher = teacher;
-        for (Teacher i : Teacher.getAllTeachers()) {
-            if (i.getId() == teacher.getId()) {
-                teacher.addCourseOfTeacher(this);
-            }
-        }
+        setTeacher(teacher);
     }
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
         for (Teacher i : Teacher.getAllTeachers()) {
-            if (i.getId() == teacher.getId()) {
+            if (i.getId().equals(teacher.getId())) {
                 teacher.addCourseOfTeacher(this);
             }
         }
@@ -82,24 +79,24 @@ public class Course {
         if (!isActive)
             throw new InactiveCourseException();
         registeredStudents.add(newStudent);
-        studentsNumber++;
+        numberOfStudents++;
         for (Student i : Student.getAllStudents()) {
-            if (i.getId() == newStudent.getId()) {
+            if (i.getId().equals(newStudent.getId())) {
                 i.addCourses(this, i.getNumberOfCurrentSemester());
             }
         }
     }
 
-    public void removeRegisteredStudent(Student removeStudent) throws InactiveCourseException,  NotFindCourseOfSemester {
+    public void removeRegisteredStudent(Student removeStudent) throws InactiveCourseException, NotFindCourseOfSemester {
         if (!isActive)
             throw new InactiveCourseException();
         registeredStudents.remove(removeStudent);
-        studentsNumber--;
-        removeStudent.removeCurses(this , removeStudent.getNumberOfCurrentSemester());
+        numberOfStudents--;
+        removeStudent.removeCurses(this, removeStudent.getNumberOfCurrentSemester());
     }
 
     public String registeredStudentsToString() throws InactiveCourseException {
-        String studentsStrnig = new String();
+        String studentsStrnig = "";
         if (!isActive)
             throw new InactiveCourseException();
         for (Student i : registeredStudents) {
@@ -107,6 +104,7 @@ public class Course {
         }
         return studentsStrnig;
     }
+
     public void printRegisteredStudents() throws InactiveCourseException {
         System.out.println(registeredStudentsToString());
     }
@@ -116,10 +114,9 @@ public class Course {
             @Override
             public int compare(Student o1, Student o2) {
                 try {
-                    if (o1.getCourseScore(Course.this) == null){
+                    if (o1.getCourseScore(Course.this) == null) {
                         return -1;
-                    }
-                    else if (o2.getCourseScore(Course.this) == null){
+                    } else if (o2.getCourseScore(Course.this) == null) {
                         return 1;
                     }
                     return o1.getCourseScore(Course.this).compareTo(o2.getCourseScore(Course.this));
@@ -128,24 +125,26 @@ public class Course {
                 }
             }
         };
-        String topStudent = new String();
+        String topStudent = "";
         registeredStudents.sort(comparator);
-        for(Student i:registeredStudents){
-            if(Objects.equals(i.getCourseScore(this), registeredStudents.getLast().getCourseScore(this))){
+        for (Student i : registeredStudents) {
+            if (Objects.equals(i.getCourseScore(this), registeredStudents.getLast().getCourseScore(this))) {
                 topStudent += i.studentToString();
             }
         }
         return topStudent;
     }
+
     public void printFirstStudentByScore() throws NotFindCurrentCourseException {
         System.out.println(firstStudentByScoreToString());
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Course course = (Course) o;
-        return studentsNumber == course.studentsNumber && isActive == course.isActive && assignmentsNumber == course.assignmentsNumber && unit == course.unit && Objects.equals(courseName, course.courseName) && Objects.equals(teacher, course.teacher) && Objects.equals(registeredStudents, course.registeredStudents) && Objects.equals(assignments, course.assignments) && Objects.equals(finalExamDate, course.finalExamDate);
+        return numberOfStudents == course.numberOfStudents && isActive == course.isActive && assignmentsNumber == course.assignmentsNumber && unit == course.unit && Objects.equals(courseName, course.courseName) && Objects.equals(teacher, course.teacher) && Objects.equals(registeredStudents, course.registeredStudents) && Objects.equals(assignments, course.assignments) && Objects.equals(finalExamDate, course.finalExamDate);
     }
 
     public List<Student> getRegisteredStudents() {
@@ -164,17 +163,20 @@ public class Course {
                 ", finalExamDate=" + finalExamDate +
                 ", units=" + unit;
     }
-    public void addAssignment(Assignment newassignment){
+
+    public void addAssignment(Assignment newassignment) {
         assignments.add(newassignment);
         assignmentsNumber++;
     }
-    public void removeAssignment(Assignment removeAssignment){
+
+    public void removeAssignment(Assignment removeAssignment) {
         assignments.remove(removeAssignment);
         assignmentsNumber--;
     }
-    public String assignmentsToString(){
-        String assignmentString = new String();
-        for(Assignment i : assignments){
+
+    public String assignmentsToString() {
+        String assignmentString = "";
+        for (Assignment i : assignments) {
             assignmentString += i.toString() + "\n";
         }
         return assignmentString;
@@ -184,19 +186,15 @@ public class Course {
         return assignmentsNumber;
     }
 
-    public int getStudentsNumber() {
-        return studentsNumber;
+    public int getNumberOfStudents() {
+        return numberOfStudents;
     }
 
     public void setActive(boolean active) {
-        if(!active){
-            studentsNumber = 0;
+        if (!active) {
+            numberOfStudents = 0;
             registeredStudents.clear();
         }
         isActive = active;
-    }
-
-    public static void main(String[] args) {
-
     }
 }

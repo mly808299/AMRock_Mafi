@@ -1,17 +1,14 @@
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+package miniProject.src;
 
 public class Main {
-    public static void main(String[] args) throws DoublicateStudentException, DoublicateTeacherException, DoublicateCourseException, InactiveCourseException, InvalidCurseException, NotFindCourseOfSemester, NotFindCurrentCourseException, NotFindStudentIdException, DoublicateAssignmentException {
+    public static void main(String[] args) throws DoublicateStudentException, DoublicateTeacherException, DoublicateCourseException, InactiveCourseException, InvalidCourseException, NotFindCourseOfSemester, NotFindCurrentCourseException, NotFindStudentIdException, DoublicateAssignmentException {
 //چک میکند که ببیند اضافه و حذف کردن درست کار میکند یا نه
-        Student student1 = new Student("Ali", "Mohammadi", 60, 1);
-        Student student2 = new Student("Reza", "Mohammadi", 87, 1);
-        Student student4 = new Student("Reza", "Alavi", 98, 1);
-        Student student3 = new Student("Mohammad", "Khalibaf", 25, 1);
-        Student student5 = new Student("Ynes", "Miri", 65, 1);
-        Teacher teacher1 = new Teacher("Ashkan", "Khalili", 57);
+        Student student1 = new Student("Ali", "Mohammadi", "60", 1);
+        Student student2 = new Student("Reza", "Mohammadi", "87", 1);
+        Student student4 = new Student("Reza", "Alavi", "98", 1);
+        Student student3 = new Student("Mohammad", "Khalibaf", "25", 1);
+        Student student5 = new Student("Ynes", "Miri", "65", 1);
+        Teacher teacher1 = new Teacher("Ashkan", "Khalili", "57");
         Course course1 = new Course("math", teacher1, 3, true, 35);
         Course course2 = new Course("math", teacher1, 3, true, 365);
         Course course3 = new Course("Ap", teacher1, 3, true, 369);
@@ -22,17 +19,17 @@ public class Main {
 //        teacher1.removeStudentFromCurse(student1 , course1);
 //       student1.printCursesOfEachTerm(1);
 //        student1.changeNumberOfCurrentSemester(2);
-        teacher1.addStudentToCourse(student1 , course1);
-        teacher1.addStudentToCourse(student2 , course1);
-        teacher1.addStudentToCourse(student3 , course1);
+        teacher1.addStudentToCourse(student1, course1);
+        teacher1.addStudentToCourse(student2, course1);
+        teacher1.addStudentToCourse(student3, course1);
 //        student1.changeNumberOfCurrentSemester(2);
 //        teacher1.addStudentToCourse(student2 ,course1);
 //        teacher1.addStudentToCourse(student2 , course3);
 //        teacher1.setScore(39.0 , 60 , course3);
 //        teacher1.setScore(15.6 , 60 , course2);
         course1.printRegisteredStudents();
-        course1.setActive(false);
-        course1.printRegisteredStudents();
+//        course1.setActive(false);
+//        course1.printRegisteredStudents();
 //        student1.printCursesOfEachTerm(2);
 
         //نمره رو استاد ست میکنه
@@ -109,16 +106,15 @@ public class Main {
 //        teacher1.removeAssignment(assignment2 , course2);
 //        System.out.println(course2.assignmentsToString());
 //
-
-        //        System.out.println(student2.getRegisteredCourses().get(student2.getRegisteredCourses().indexOf(course2)).assignmentsToString());
+//        System.out.println(student2.getRegisteredCourses().get(student2.getRegisteredCourses().indexOf(course2)).assignmentsToString());
 //        Student student1 = new Student("Ali", "Mohammadi", 60, 1);
 //        Student student2 = new Student("Reza", "Mohammadi", 87, 1);
 //        Student student4 = new Student("Reza", "Alavi", 98, 1);
 //        Student student3 = new Student("Mohammad", "Khalibaf", 25, 1);
 //        Student student5 = new Student("Ynes", "Miri", 65, 1);
 //        Teacher teacher1 = new Teacher("Ashkan", "Khalili", 57);
-//        Course course1 = new Course("math", teacher1, 3, true , 35);
 //        Course course2 = new Course("math", teacher1, 3, true , 366);
+//        Course course1 = new Course("math", teacher1, 3, true , 35);
 //        teacher1.addStudentToCourse(student1 , course2);
 //        teacher1.addStudentToCourse(student2 , course1);
 //        teacher1.addStudentToCourse(student3 , course1);

@@ -1,5 +1,6 @@
+package miniProject.src;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -7,14 +8,14 @@ public class Teacher {
     private static List<Teacher> allTeachers = new ArrayList<>();
     private String firstName;
     private String lastName;
-    private int id;
+    private String id;
     private int numberOfLessons;
     private List<Course> courses = new ArrayList<>();
 
-    public Teacher(String firstName, String lastName, int id) throws DoublicateTeacherException {
+    public Teacher(String firstName, String lastName, String id) throws DoublicateTeacherException {
         if (!allTeachers.isEmpty()) {
             for (Teacher i : allTeachers) {
-                if (id == i.id)
+                if (id.equals(i.id))
                     throw new DoublicateTeacherException();
             }
         }
@@ -28,17 +29,19 @@ public class Teacher {
         courses.add(newCourse);
         numberOfLessons++;
     }
-    public void removeCurseOfTeacher(Course removeCurse){
+
+    public void removeCurseOfTeacher(Course removeCurse) {
         courses.remove(removeCurse);
         numberOfLessons--;
     }
-    public void setScore(Double newScore, int studentId, Course course) throws NotFindCurrentCourseException, NotFindCourseOfSemester, NotFindStudentIdException {
+
+    public void setScore(Double newScore, String studentId, Course course) throws NotFindCurrentCourseException, NotFindCourseOfSemester, NotFindStudentIdException {
         boolean foundCourse = false;
         boolean foundStudentId = false;
         for (Course i : courses) {
             if (i.getCourseCode() == course.getCourseCode()) {
                 for (Student j : i.getRegisteredStudents()) {
-                    if (j.getId() == studentId) {
+                    if (j.getId().equals(studentId)) {
                         for (Integer p : j.getCurrentSemesters().getScores().keySet()) {
                             if (p == course.getCourseCode()) {
                                 j.getCurrentSemesters().getScores().put(p, newScore);
@@ -58,28 +61,20 @@ public class Teacher {
         }
     }
 
-    public void addStudentToCourse(Student newStudent, Course thisCourse) throws InactiveCourseException, InvalidCurseException, NotFindCourseOfSemester {
-        for (Course i : courses) {
-            if (i.getCourseCode() == thisCourse.getCourseCode()) {
-                i.addRegisteredStudents(newStudent);
-                return;
-            }
-        }
-        throw new InvalidCurseException();
+    public void addStudentToCourse(Student newStudent, Course course) throws InactiveCourseException, InvalidCourseException, NotFindCourseOfSemester {
+        var trueCourse = getCourse(course);
+        if (trueCourse != null) {
+            trueCourse.addRegisteredStudents(newStudent);
+        } else
+            throw new InvalidCourseException();
     }
 
-    public void removeStudentFromCurse(Student newStudent, Course thisCourse) throws InactiveCourseException, InvalidCurseException, NotFindCourseOfSemester {
-        for (Course i : courses) {
-            if (i.getCourseCode() == thisCourse.getCourseCode()) {
-                i.removeRegisteredStudent(newStudent);
-                return;
-            }
-        }
-        throw new InvalidCurseException();
-    }
-
-    public static List<Teacher> getAllTeachers() {
-        return allTeachers;
+    public void removeStudentFromCourse(Student newStudent, Course course) throws InactiveCourseException, InvalidCourseException, NotFindCourseOfSemester {
+        var trueCourse = getCourse(course);
+        if (trueCourse != null) {
+            trueCourse.removeRegisteredStudent(newStudent);
+        } else
+            throw new InvalidCourseException();
     }
 
     @Override
@@ -87,48 +82,60 @@ public class Teacher {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Teacher teacher = (Teacher) o;
-        return id == teacher.id && numberOfLessons == teacher.numberOfLessons && Objects.equals(firstName, teacher.firstName) && Objects.equals(lastName, teacher.lastName) && Objects.equals(courses, teacher.courses);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
+        return id.equals(teacher.id) && numberOfLessons == teacher.numberOfLessons && Objects.equals(firstName, teacher.firstName) && Objects.equals(lastName, teacher.lastName) && Objects.equals(courses, teacher.courses) && Objects.equals(id, teacher.lastName);
     }
 
     public void setExamCourse(int day, int month, int year, Course course) {
         DateDeadLine date = new DateDeadLine(day, month, year);
-        for (Course i : courses) {
-            if (course.getCourseCode() == i.getCourseCode()) {
-                i.setFinalExamDate(date);
-            }
+        var trueCourse = getCourse(course);
+        if (trueCourse != null) {
+            trueCourse.setFinalExamDate(date);
         }
     }
-    public void addAssignment(Assignment newAssignment , Course course){
-        for(Course i : courses){
-            if(i.getCourseCode() == course.getCourseCode()){
-                i.addAssignment(newAssignment);
-            }
+
+    public void addAssignment(Assignment newAssignment, Course course) {
+        var trueCourse = getCourse(course);
+        if (trueCourse != null) {
+            trueCourse.addAssignment(newAssignment);
         }
     }
-    public void removeAssignment(Assignment  removeAssignment , Course course){
-        for(Course i : courses){
-            if(i.getCourseCode() == course.getCourseCode()){
-                i.removeAssignment(removeAssignment);
-            }
+
+    public void removeAssignment(Assignment removeAssignment, Course course) {
+        var trueCourse = getCourse(course);
+        if (trueCourse != null) {
+            trueCourse.removeAssignment(removeAssignment);
         }
     }
 
     @Override
     public String toString() {
-        return "Teacher{" +
+        return "miniProject.Teacher{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", id=" + id +
                 ", numberOfLessons=" + numberOfLessons +
                 "\n courses=" + courses +
                 '}';
+    }
+
+    private Course getCourse(Course course) {
+        for (Course i : courses) {
+            if (i.getCourseCode() == course.getCourseCode()) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public static List<Teacher> getAllTeachers() {
+        return allTeachers;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
     }
 }
