@@ -1,7 +1,7 @@
-package CliProject.src;
-
-import miniProject.src.Person;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Admin extends Person

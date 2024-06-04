@@ -1,5 +1,3 @@
-package CliProject.src;
-
 import java.io.*;
 import java.rmi.StubNotFoundException;
 import java.util.*;

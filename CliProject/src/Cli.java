@@ -1,6 +1,5 @@
-package CliProject.src;
-
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
