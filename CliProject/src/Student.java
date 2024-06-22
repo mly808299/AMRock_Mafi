@@ -1,8 +1,7 @@
-package CliProject.src;
-
 import java.io.*;
-import java.rmi.StubNotFoundException;
 import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Student extends Person
         implements Comparable<Student>, Serializable {
@@ -11,6 +10,7 @@ public class Student extends Person
     private int numberOfCurrentSemester;
     private Double totalAverage = 0.0;
     private Double averageOfRegisteredSemester = 0.0;
+    private int unit = 0;
 
     public static void loadAllStudent() {
         File file = new File("studentDatabaseObjects.ser");
@@ -155,7 +155,10 @@ public class Student extends Person
     }
 
     public int registrationUnitstoInt() {
-        return semesters.get(this.numberOfCurrentSemester).getNumberOfUnits();
+        if(semesters.isEmpty()){
+            return 0;
+        }
+        return unit = semesters.get(this.numberOfCurrentSemester).getNumberOfUnits();
     }
 
     public void printRegistrationUnits() {
@@ -261,5 +264,10 @@ public class Student extends Person
                 ", id='" + super.getId() + '\'' +
                 ", numberOfCurrentSemester=" + numberOfCurrentSemester +
                 '}';
+    }
+
+    public static void main(String[] args) throws DoublicateException {
+        Student student = new Student("sdsd" , "sdsds" , "sdsds" , "sdsd" , "sdsds" , 0);
+        System.out.println(student.toJson());
     }
 }

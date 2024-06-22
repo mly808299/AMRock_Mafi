@@ -1,4 +1,5 @@
-package CliProject.src;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,5 +62,21 @@ public class Person implements Serializable {
                 ", password='" + password + '\'' +
                 ", id='" + id + '\'' +
                 '}';
+    }
+    public String toJson() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this);
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -1,5 +1,3 @@
-package CliProject.src;
-
 import java.io.Serializable;
 import java.util.*;
 

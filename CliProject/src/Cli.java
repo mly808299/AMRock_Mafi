@@ -1,5 +1,3 @@
-package CliProject.src;
-
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -216,7 +214,7 @@ public class Cli {
         return password.matches(regex);
     }
 
-    private static void adminLogin(Scanner chooseOptions) {
+    public static void adminLogin(Scanner chooseOptions) {
         try {
             if (checkAccount(chooseOptions, "adminDatabase.txt")) {
                 Admin loginAdmin = new Admin();
@@ -241,7 +239,7 @@ public class Cli {
         }
     }
 
-    private static void loginPageForAdmin(Admin loginAdmin, Scanner chooseOptions) throws TooManyAttemptsException, DoublicateException, IOException, NotFindCourseOfSemester, InactiveCourseException, InvalidCourseException, DoublicateCourseException, CourseISEmptyException, DoublicateAssignmentException, AssignmentIsEmptyException, NotFindAssignmentException, InvalidOptionException {
+    public static void loginPageForAdmin(Admin loginAdmin, Scanner chooseOptions) throws TooManyAttemptsException, DoublicateException, IOException, NotFindCourseOfSemester, InactiveCourseException, InvalidCourseException, DoublicateCourseException, CourseISEmptyException, DoublicateAssignmentException, AssignmentIsEmptyException, NotFindAssignmentException, InvalidOptionException {
         while (true) {
             System.out.println(ANSI_PURPLE + "please choose one of the following options to do the function:" + ANSI_RESET);
             System.out.println(ANSI_BLUE + """

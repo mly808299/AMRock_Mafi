@@ -1,5 +1,3 @@
-package CliProject.src;
-
 class InactiveCourseException extends Exception {
 }
 
