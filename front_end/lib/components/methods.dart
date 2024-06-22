@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
+
 void customToast(String massage, BuildContext context) {
   showToast(massage,
       textStyle: const TextStyle(
@@ -17,3 +18,5 @@ void customToast(String massage, BuildContext context) {
       duration: const Duration(seconds: 5),
       context: context);
 }
+
+
