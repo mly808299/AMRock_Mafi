@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mafi2/Pages/Signup_page.dart';
+import 'package:mafi2/Pages/signup_page.dart';
 import '../components/methods.dart';
 import '../components/my_button.dart';
 
