@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mafi2/components/my_button.dart';
-import '../components/classBox.dart';
-import 'news_pages.dart';
+import '../components/methods.dart';
 
 class CoursePage extends StatefulWidget {
   const CoursePage({super.key});
@@ -11,12 +9,12 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
+
   void _showAddCourse(context) {
     showModalBottomSheet(
         context: context,
-        builder: (BuildContext bc) {
-          final formKey = GlobalKey<FormState>();
-          final codeController = TextEditingController();
+        builder: (BuildContext context) {
+          String? input;
           return SingleChildScrollView(
             child: Container(
               decoration: const BoxDecoration(
@@ -61,14 +59,11 @@ class _CoursePageState extends State<CoursePage> {
                   ),
                   Container(
                     margin: const EdgeInsets.only(bottom: 10, top: 5),
-                    child: Form(
-                      key: formKey,
                       child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20.0,
                           ),
                           child: TextFormField(
-                            controller: codeController,
                             keyboardType: TextInputType.name,
                             obscureText: false,
                             decoration: InputDecoration(
@@ -87,13 +82,13 @@ class _CoursePageState extends State<CoursePage> {
                               filled: true,
                               hintText: "Enter the Course code...",
                             ),
-                            validator: (value) => value!.isEmpty
-                                ? 'Course code can\'t be empty !!!'
-                                : null,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
+                            validator: (value){
+                              input = value;
+                                return null;
+                            },
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                           )),
-                    ),
+
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -113,9 +108,10 @@ class _CoursePageState extends State<CoursePage> {
                           ),
                         ),
                         onPressed: () {
-                          bool key1 = formKey.currentState!.validate();
-                          if (key1) {
-                            Navigator.pop(context);
+                          if (input != null) {
+                            customToast(
+                                "Course has been successfully add to your courses", context);
+                              Navigator.pop(context);
                           }
                         },
                         child: const Text(
@@ -219,171 +215,9 @@ class _CoursePageState extends State<CoursePage> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 100),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 80),
-                  child: Container(child: buildListView()),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 500),
-                  child: Stack(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SecondRoute(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.calendar_month_outlined,
-                          size: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 80,
-                    color: Colors.cyanAccent,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Column(
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const SecondRoute(),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.edit_note_sharp)),
-                            const Text(
-                              'Assignments',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 25,
-                        ),
-                        Column(
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const News(),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.newspaper)),
-                            const Text(
-                              'News',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 25),
-                        Column(
-                          children: [
-                            IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.school_rounded)),
-                            const Text(
-                              'Courses',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 25,
-                        ),
-                        Column(
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const SecondRoute(),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.work)),
-                            const Text(
-                              'Jobs',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 25,
-                        ),
-                        Column(
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const SecondRoute(),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.home_outlined)),
-                            const Text(
-                              'Sera',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
-      ),
-
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(left:25,bottom: 75),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SecondRoute(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.yellow[600],
-              child: const Icon(
-                Icons.calendar_month_outlined,
-                size: 30,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
 }
+
