@@ -1,3 +1,7 @@
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.annotations.Expose;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,6 +28,7 @@ class DateDeadLine implements Serializable{
 }
 public class Course implements Serializable {
     private static List<Course> allCourses = new ArrayList<>();
+    private String topStudentOfWeek;
     private String courseName;
     private Teacher teacher;
     private Integer courseCode;
@@ -33,8 +38,28 @@ public class Course implements Serializable {
     private List<Assignment> assignments = new ArrayList<>();
     private int assignmentsNumber;
     private int unit;
-    private DateDeadLine finalExamDate;
+    private String finalExamDate;
+    private int numberOfRemainingAssignments = 0;
+    public JsonObject toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("courseName", courseName);
+        Gson gson = new Gson();
+        jsonObject.addProperty("teacherName", teacher == null ? " " : teacher.getFirstName()+" " + teacher.getLastName());
+        jsonObject.addProperty("numberOfStudents", numberOfStudents);
+        jsonObject.addProperty("assignmentsNumber", assignmentsNumber);
+        jsonObject.addProperty("unit", unit);
+        jsonObject.addProperty("topStudentOfWeek", topStudentOfWeek);
+        jsonObject.addProperty("numberOfRemainingAssignments", numberOfRemainingAssignments);
+        jsonObject.addProperty("finalExamDate", finalExamDate);
+        return jsonObject;
+    }
+
+    public void setTopStudentOfWeek() throws NotFindCurrentCourseException {
+        this.topStudentOfWeek = firstStudentByScoreToString();
+    }
+
     public static void loadAllCourse() {
+                    allCourses.clear();
         File file = new File("courseDatabaseObjects.ser");
         if (!file.exists()) {
             try {
@@ -70,7 +95,7 @@ public class Course implements Serializable {
         return unit;
     }
 
-    public Course(String courseName, int unit, boolean isActive, int courseCode) throws DoublicateCourseException {
+    public Course(String courseName, int unit, boolean isActive, int courseCode , String finalExamDate) throws DoublicateCourseException, NotFindCurrentCourseException {
         if (!allCourses.isEmpty()) {
             for (Course i : allCourses) {
                 if (i.courseName.equals(courseName) && i.unit == unit && i.isActive == isActive && i.getCourseCode() == courseCode)
@@ -80,13 +105,14 @@ public class Course implements Serializable {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.unit = unit;
+        this.finalExamDate = finalExamDate;
         setActive(isActive);
         allCourses.add(this);
         saveToDatabaseObject();
     }
 
-    public Course(String courseName, Teacher teacher, int unit, boolean isActive, int courseCode) throws DoublicateCourseException, InactiveCourseException {
-        this(courseName, unit, isActive, courseCode);
+    public Course(String courseName, Teacher teacher, int unit, boolean isActive, int courseCode , String finalExamDate) throws DoublicateCourseException, InactiveCourseException, NotFindCurrentCourseException {
+        this(courseName, unit, isActive, courseCode, finalExamDate);
         setTeacher(teacher);
 
     }
@@ -112,11 +138,11 @@ public class Course implements Serializable {
         }
     }
 
-    public void setFinalExamDate(DateDeadLine finalExamDate) {
+    public void setFinalExamDate(String finalExamDate) {
         this.finalExamDate = finalExamDate;
     }
 
-    public DateDeadLine getFinalExamDate() {
+    public String getFinalExamDate() {
         return finalExamDate;
     }
 
@@ -171,12 +197,9 @@ public class Course implements Serializable {
             }
         };
         String topStudent = "";
+        assert registeredStudents != null;
         registeredStudents.sort(comparator);
-        for (Student i : registeredStudents) {
-            if (Objects.equals(i.getCourseScore(this), registeredStudents.getLast().getCourseScore(this))) {
-                topStudent += i.studentToString();
-            }
-        }
+            topStudent = registeredStudents.getFirst().getFirstName() + " " + registeredStudents.getFirst().getLastName();
         return topStudent;
     }
 
@@ -199,7 +222,7 @@ public class Course implements Serializable {
     public Integer getCourseCode() {
         return courseCode;
     }
-    public Course(){}
+    public Course() throws NotFindCurrentCourseException {}
 
     @Override
     public String toString() {
@@ -288,4 +311,19 @@ public class Course implements Serializable {
     public static void setAllCourses(List<Course> allCourses) {
         Course.allCourses = allCourses;
     }
+
+    public void setAssignments(List<Assignment> assignments) {
+        this.assignments = assignments;
+    }
+
+    public void setNumberOfRemainingAssignments() {
+        int sum = 0;
+        for (Assignment i :assignments){
+            if(i.getActive() || !i.getDone()){
+                sum++;
+            }
+        }
+        numberOfRemainingAssignments = sum;
+    }
+
 }

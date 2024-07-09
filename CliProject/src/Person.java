@@ -63,7 +63,7 @@ public class Person implements Serializable {
                 ", id='" + id + '\'' +
                 '}';
     }
-    public String toJson() {
+    public String toJsonStudentName() {
         Gson gson = new GsonBuilder().create();
         return gson.toJson(this);
     }

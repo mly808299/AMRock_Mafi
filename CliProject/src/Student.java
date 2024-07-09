@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 
 public class Student extends Person
         implements Comparable<Student>, Serializable {
@@ -9,10 +10,11 @@ public class Student extends Person
     private Map<Integer, Semester> semesters = new HashMap<>();
     private int numberOfCurrentSemester;
     private Double totalAverage = 0.0;
+    private List<Tasks> tasks = new ArrayList<>();
     private Double averageOfRegisteredSemester = 0.0;
     private int unit = 0;
-
     public static void loadAllStudent() {
+        allStudents.clear();
         File file = new File("studentDatabaseObjects.ser");
         if (!file.exists()) {
             try {
@@ -265,9 +267,24 @@ public class Student extends Person
                 ", numberOfCurrentSemester=" + numberOfCurrentSemester +
                 '}';
     }
+    public String toJsonStudentFiled() throws DoublicateAssignmentException {
+//        setAssignments();
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this);
+    }
 
-    public static void main(String[] args) throws DoublicateException {
-        Student student = new Student("sdsd" , "sdsds" , "sdsds" , "sdsd" , "sdsds" , 0);
-        System.out.println(student.toJson());
+    public static void main(String[] args) throws DoublicateException, NotFindStudentIdException, StudentIsEmptyException {
+        System.out.println(findById("114210").tasks);
+//        Student student = new Student("sdsd" , "sdsds" , "sdsds" , "sdsd" , "sdsds" , 0);
+//        student.tasks.add(new Tasks("dskdls" , "fdfdf" , "dsdsd" , true ,true));
+//        System.out.println(student.toJsonStudentFiled());
+    }
+
+    public List<Tasks> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Tasks> tasks) {
+        this.tasks = tasks;
     }
 }

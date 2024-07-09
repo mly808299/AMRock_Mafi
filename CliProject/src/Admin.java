@@ -102,10 +102,9 @@ public class Admin extends Person {
     }
 
     public void setExamCourse(int day, int month, int year, Course course) {
-        DateDeadLine date = new DateDeadLine(day, month, year);
         for (Course i : Course.getAllCourses()) {
             if (course.getCourseCode() == i.getCourseCode()) {
-                i.setFinalExamDate(date);
+                i.setFinalExamDate(year +"-"+month+"-"+day);
             }
         }
     }
@@ -134,8 +133,8 @@ public class Admin extends Person {
         assignment.updateIsActive(active);
     }
 
-    public void updateAssignmentDeadLine(Assignment assignment, int dateDeadLine) {
-        assignment.updateDeadLine(dateDeadLine);
+    public void updateAssignmentDeadLine(Assignment assignment, String date) {
+        assignment.updateDeadLine(date);
     }
 
     public static List<Admin> getAllAdmins() {

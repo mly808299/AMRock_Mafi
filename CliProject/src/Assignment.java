@@ -1,18 +1,25 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-enum AssignmentType {practice, project}
 
 public class Assignment implements Serializable{
     private static List<Assignment> allAssignments = new ArrayList<>();
-    private AssignmentType assignmentType;
     private String assignmentName;
-    private int deadline;
+    private String date;
+    private String time;
+    private boolean isAm;
     private boolean isActive;
+    private String description;
+    private boolean isDone;
     private String id;
+    private String estimateTime;
     public static void loadAllAssignments() {
+        allAssignments.clear();
         File file = new File("assignmentDatabaseObjects.ser");
         if (!file.exists()) {
             try {
@@ -45,38 +52,49 @@ public class Assignment implements Serializable{
         }
     }
 
-    public Assignment(String assignmentName, AssignmentType assignmentType, int deadline, boolean isActive , String id) throws DoublicateAssignmentException {
-        if (!allAssignments.isEmpty()) {
-            for (Assignment i : allAssignments) {
-                if (Objects.equals(assignmentName, i.assignmentName) && assignmentType == i.assignmentType)
-                    throw new DoublicateAssignmentException();
-            }
-        }
+    public Assignment(String assignmentName, boolean isActive , String id , String date , String time , boolean isAm , String description , String estimateTime) throws DoublicateAssignmentException {
+//        if (!allAssignments.isEmpty()) {
+//            for (Assignment i : allAssignments) {
+//                if (Objects.equals(assignmentName, i.assignmentName) )
+//                    throw new DoublicateAssignmentException();
+//            }
+//        }
         this.assignmentName = assignmentName;
-        this.assignmentType = assignmentType;
         this.isActive = isActive;
-        this.deadline = deadline;
+        this.date = date;
+        this.time = time;
         this.id = id;
+        this.isAm = isAm;
+        this.description = description;
+        this.estimateTime = estimateTime;
         allAssignments.add(this);
         saveToDatabaseObject();
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 
     public void updateIsActive(boolean isActive) {
         this.isActive = isActive;
     }
 
-    public void updateDeadLine(int deadline) {
-        this.deadline = deadline;
+    public void updateDeadLine(String date) {
+        this.date = date;
     }
 
     @Override
     public String toString() {
-        return "Assignment{"+
-                "assignmentType=" + assignmentType +
-                ", assignmentName='" + assignmentName + '\'' +
-                ", deadline=" + deadline +
+        return "Assignment{" +
+                "assignmentName='" + assignmentName + '\'' +
+                ", date='" + date + '\'' +
+                ", time='" + time + '\'' +
+                ", isAm=" + isAm +
                 ", isActive=" + isActive +
-                ", id='" + id + '\'';
+                ", description='" + description + '\'' +
+                ", isDone=" + isDone +
+                ", id='" + id + '\'' +
+                '}';
     }
 
     public static List<Assignment> getAllAssignments() {
@@ -103,5 +121,41 @@ public class Assignment implements Serializable{
 
     public static void setAllAssignments(List<Assignment> allAssignments) {
         Assignment.allAssignments = allAssignments;
+    }
+
+    public String getAssignmentName() {
+        return assignmentName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getEstimateTime() {
+        return estimateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean getActive() {
+        return isActive;
+    }
+
+    public boolean getDone() {
+        return isDone;
+    }
+
+    public void setEstimateTime(String estimateTime) {
+        this.estimateTime = estimateTime;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

@@ -358,6 +358,8 @@ public class Cli {
                         System.out.println(ANSI_PURPLE + "please enter courseName:" + ANSI_RESET);
                         chooseOptions.nextLine();
                         String courseName = chooseOptions.nextLine();
+                        System.out.println(ANSI_PURPLE + "please enter finalExamDate in type(year-month-day) :" + ANSI_RESET);
+                        String finalExamDate = chooseOptions.nextLine();
                         clearConsole();
                         System.out.println(ANSI_PURPLE + "please enter unitOfCourse(it is Integer):" + ANSI_RESET);
                         int unit = chooseOptions.nextInt();
@@ -367,7 +369,7 @@ public class Cli {
                         clearConsole();
                         Integer courseCode = ThreadLocalRandom.current().nextInt(100000, 200000);
                         System.out.println(ANSI_GREEN + "\t\tcourse created successfully" + "\n your uniq codeCourse is : " + courseCode + " please don not forget your id!!!\n" + ANSI_RESET);
-                        new Course(courseName, unit, isActive, courseCode);
+                        new Course(courseName, unit, isActive, courseCode , finalExamDate);
                         try {
                             Thread.sleep(6000);
                         } catch (InterruptedException e) {
@@ -592,6 +594,7 @@ public class Cli {
                             e.printStackTrace();
                         }
                         clearConsole();
+                        Assignment.saveToDatabaseObject();
                         Course.saveToDatabaseObject();
                         Teacher.teacherUpdateDataBase();
                         Student.saveToDatabaseObject();
@@ -603,9 +606,9 @@ public class Cli {
                         String assignmentId2 = chooseOptions.nextLine();
                         clearConsole();
                         assignment2 = Assignment.findById(assignmentId2);
-                        System.out.println(ANSI_PURPLE + "please enter deadline(please enter number of days that remain to finish the time of assignment):" + ANSI_RESET);
-                        Integer deadlineAssignment = chooseOptions.nextInt();
-                        loginAdmin.updateAssignmentDeadLine(assignment2, deadlineAssignment);
+                        System.out.println(ANSI_PURPLE + "please enter date in type of (year-month-day):" + ANSI_RESET);
+                        String date1 = chooseOptions.next();
+                        loginAdmin.updateAssignmentDeadLine(assignment2, date1);
                         System.out.println(ANSI_GREEN + "Deadline update successfully" + ANSI_RESET);
                         try {
                             Thread.sleep(4000);
@@ -613,6 +616,7 @@ public class Cli {
                             e.printStackTrace();
                         }
                         clearConsole();
+                        Assignment.saveToDatabaseObject();
                         Course.saveToDatabaseObject();
                         Teacher.teacherUpdateDataBase();
                         Student.saveToDatabaseObject();
@@ -638,30 +642,28 @@ public class Cli {
                         chooseOptions.nextLine();
                         System.out.println(ANSI_PURPLE + "please enter assignmentName:" + ANSI_RESET);
                         String assignmentName = chooseOptions.nextLine();
-                        System.out.println(ANSI_PURPLE + "please define assignmentType:\n1:Project\n2:practice" + ANSI_RESET);
-                        Integer option = chooseOptions.nextInt();
-                        AssignmentType assignmentType = null;
-                        switch (option) {
-                            case 1:
-                                assignmentType = AssignmentType.project;
-                                break;
-                            case 2:
-                                assignmentType = AssignmentType.practice;
-                                break;
-                        }
-                        System.out.println(ANSI_PURPLE + "please define that the course is active or not with true or false\nactive:true\ninactive:false" + ANSI_RESET);
+                        System.out.println(ANSI_PURPLE + "please define that the Assignment is active or not with true or false\nactive:true\ninactive:false" + ANSI_RESET);
                         Boolean isActiveAssignment = chooseOptions.nextBoolean();
+                        System.out.println(ANSI_PURPLE + "please enter date in type of (year-month-day):" + ANSI_RESET);
+                        String date = chooseOptions.next();
+                        System.out.println(ANSI_PURPLE + "please enter time in type of (hour-minute):" + ANSI_RESET);
+                        String time = chooseOptions.next();
+                        System.out.println(ANSI_PURPLE + "please define that the deadLine of Assignment is Am or Pm with true or false\nAM:true\nPM:false" + ANSI_RESET);
+                        Boolean isAm = chooseOptions.nextBoolean();
+                        System.out.println(ANSI_PURPLE + "please enter the description:" + ANSI_RESET);
+                        String description1 = chooseOptions.next();
+                        System.out.println(ANSI_PURPLE + "please enter the estimateTime:" + ANSI_RESET);
+                        String estimateTime = chooseOptions.next();
                         String assignmentId = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 200000));
-                        System.out.println(ANSI_PURPLE + "please enter deadLine of assignment(please enter number of days that remain to finish the time of assignment):" + ANSI_RESET);
-                        Integer deadline = chooseOptions.nextInt();
                         System.out.println(ANSI_GREEN + "\t\tassignment created successfully" + "\n your uniq assignmentId is : " + assignmentId + " please don not forget your id!!!\n" + ANSI_RESET);
-                        new Assignment(assignmentName, assignmentType, deadline, isActiveAssignment, assignmentId);
+                        new Assignment(assignmentName,isActiveAssignment, assignmentId , date , time , isAm , description1 , estimateTime);
                         try {
                             Thread.sleep(4000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         clearConsole();
+                        Assignment.saveToDatabaseObject();
                         Course.saveToDatabaseObject();
                         Teacher.teacherUpdateDataBase();
                         Student.saveToDatabaseObject();
@@ -727,6 +729,7 @@ public class Cli {
                             e.printStackTrace();
                         }
                         clearConsole();
+                        Assignment.saveToDatabaseObject();
                         Course.saveToDatabaseObject();
                         Teacher.teacherUpdateDataBase();
                         Student.saveToDatabaseObject();
@@ -745,6 +748,7 @@ public class Cli {
                             e.printStackTrace();
                         }
                         clearConsole();
+                        Assignment.saveToDatabaseObject();
                         Course.saveToDatabaseObject();
                         Teacher.teacherUpdateDataBase();
                         Student.saveToDatabaseObject();
@@ -1138,10 +1142,10 @@ public class Cli {
                         String assignmentId2 = chooseOptions.nextLine();
                         clearConsole();
                         assignment2 = Assignment.findById(assignmentId2);
-                        System.out.println(ANSI_PURPLE + "please enter deadline(please enter number of days that remain to finish the time of assignment):" + ANSI_RESET);
-                        Integer deadlineAssignment = chooseOptions.nextInt();
+                        System.out.println(ANSI_PURPLE + "please enter date in type of (year-month-day):" + ANSI_RESET);
+                        String date2 = chooseOptions.next();
                         clearConsole();
-                        loginTeacher.updateAssignmentDeadLine(assignment2, deadlineAssignment);
+                        loginTeacher.updateAssignmentDeadLine(assignment2, date2);
                         System.out.println(ANSI_GREEN + "Deadline update successfully" + ANSI_RESET);
                         Student.saveToDatabaseObject();
                         Course.saveToDatabaseObject();
@@ -1157,24 +1161,21 @@ public class Cli {
                         chooseOptions.nextLine();
                         System.out.println(ANSI_PURPLE + "please enter assignmentName:" + ANSI_RESET);
                         String assignmentName = chooseOptions.nextLine();
-                        System.out.println(ANSI_PURPLE + "please define assignmentType:\n1:Project\n2:practice" + ANSI_RESET);
-                        Integer option = chooseOptions.nextInt();
-                        AssignmentType assignmentType = null;
-                        switch (option) {
-                            case 1:
-                                assignmentType = AssignmentType.project;
-                                break;
-                            case 2:
-                                assignmentType = AssignmentType.practice;
-                                break;
-                        }
-                        System.out.println(ANSI_PURPLE + "please define that the course is active or not with true or false\nactive:true\ninactive:false" + ANSI_RESET);
+                        System.out.println(ANSI_PURPLE + "please define that the Assignment is active or not with true or false\nactive:true\ninactive:false" + ANSI_RESET);
                         Boolean isActiveAssignment = chooseOptions.nextBoolean();
+                        System.out.println(ANSI_PURPLE + "please enter date in type of (year-month-day):" + ANSI_RESET);
+                        String date = chooseOptions.next();
+                        System.out.println(ANSI_PURPLE + "please enter time in type of (hour-minute):" + ANSI_RESET);
+                        String time = chooseOptions.next();
+                        System.out.println(ANSI_PURPLE + "please define that the deadLine of Assignment is Am or Pm with true or false\nAM:true\nPM:false" + ANSI_RESET);
+                        Boolean isAm = chooseOptions.nextBoolean();
+                        System.out.println(ANSI_PURPLE + "please enter the description:" + ANSI_RESET);
+                        String description = chooseOptions.next();
+                        System.out.println(ANSI_PURPLE + "please enter the estimateTime:" + ANSI_RESET);
+                        String estimateTime = chooseOptions.next();
                         String assignmentId = String.valueOf(ThreadLocalRandom.current().nextInt(100000, 200000));
-                        System.out.println(ANSI_PURPLE + "please enter deadLine of assignment(please enter number of days that remain to finish the time of assignment):" + ANSI_RESET);
-                        Integer deadline = chooseOptions.nextInt();
                         System.out.println(ANSI_GREEN + "\t\tassignment created successfully" + "\n your uniq assignmentId is : " + assignmentId + " please don not forget your id!!!\n" + ANSI_RESET);
-                        new Assignment(assignmentName, assignmentType, deadline, isActiveAssignment, assignmentId);
+                        new Assignment(assignmentName,isActiveAssignment, assignmentId , date , time , isAm , description , estimateTime);
                         try {
                             Thread.sleep(6000);
                         } catch (InterruptedException e) {

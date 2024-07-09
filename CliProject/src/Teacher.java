@@ -10,6 +10,7 @@ public class Teacher extends Person
     private List<Course> courses = new ArrayList<>();
 
     public static void loadAllTeachers() {
+        allTeachers.clear();
         File file = new File("teacherDatabaseObjects.ser");
         if (!file.exists()) {
             try {
@@ -127,10 +128,9 @@ public class Teacher extends Person
     }
 
     public void setExamCourse(int day, int month, int year, Course course) {
-        DateDeadLine date = new DateDeadLine(day, month, year);
         var trueCourse = getCourse(course);
         if (trueCourse != null) {
-            trueCourse.setFinalExamDate(date);
+            trueCourse.setFinalExamDate(year +"-"+month+"-"+day);
         }
     }
 
@@ -191,8 +191,8 @@ public class Teacher extends Person
         assignment.updateIsActive(active);
     }
 
-    public void updateAssignmentDeadLine(Assignment assignment, int dateDeadLine) {
-        assignment.updateDeadLine(dateDeadLine);
+    public void updateAssignmentDeadLine(Assignment assignment, String date) {
+        assignment.updateDeadLine(date);
     }
     public void assignmentRemoveFromDatabase(Object id) throws DoublicateException, IOException, CourseISEmptyException, NotFindCourseOfSemester, AssignmentIsEmptyException, NotFindAssignmentException, NotFindStudentIdException, StudentIsEmptyException, TeacherIsEmptyException, NotFindTeacherException, InactiveCourseException {
             String idAssignment1 = (String) id;
