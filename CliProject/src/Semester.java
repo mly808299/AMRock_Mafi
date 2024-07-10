@@ -14,14 +14,18 @@ public class Semester implements Serializable {
 
     public Semester(Course newCourse) {
         this.courses.add(newCourse);
-        this.scores.put(newCourse.getCourseCode(), null);
+        this.scores.put(newCourse.getCourseCode(), 0.0);
         numberOfCourses++;
         this.numberOfUnits += newCourse.getUnit();
     }
 
+    public void setNumberOfUnits(int numberOfUnits) {
+        this.numberOfUnits = numberOfUnits;
+    }
+
     public void addCourses(Course newCurse) {
         courses.add(newCurse);
-        this.scores.put(newCurse.getCourseCode(), null);
+        this.scores.put(newCurse.getCourseCode(), 0.0);
         numberOfCourses++;
         this.numberOfUnits += newCurse.getUnit();
         calculateTotalAverageOfRegisteredSemester();
@@ -36,6 +40,19 @@ public class Semester implements Serializable {
         numberOfCourses--;
         this.numberOfUnits -= removeCourse.getUnit();
         calculateTotalAverageOfRegisteredSemester();
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+        for(Course course : courses) {
+            this.scores.clear();
+            this.scores.put(course.getCourseCode(), 0.0);
+            numberOfCourses = 0;
+            numberOfCourses++;
+            this.numberOfUnits = 0;
+            this.numberOfUnits += course.getUnit();
+            calculateTotalAverageOfRegisteredSemester();
+        }
     }
 
     public int getNumberOfCourses() {
@@ -66,6 +83,7 @@ public class Semester implements Serializable {
             totalAverage = 0.0;
             return;
         }
+        System.out.println(courses.size());
         totalAverage = newTotalAverage / courses.size();
     }
 

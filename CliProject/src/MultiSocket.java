@@ -128,9 +128,11 @@ public class MultiSocket {
                                         student = findByUsername(username);
                                         List<Assignment> assignments = new ArrayList<>();
                                         assert student != null;
-
-                                        for (Course j : student.getCurrentSemesters().getCourses()) {
-                                            assignments.addAll(j.getAssignments());
+                                        try {
+                                            for (Course j : student.getCurrentSemesters().getCourses()) {
+                                                assignments.addAll(j.getAssignments());
+                                            }
+                                        } catch (NotFindCourseOfSemester e) {
                                         }
                                         System.out.println(assignments);
                                         gson = new Gson();
@@ -139,24 +141,29 @@ public class MultiSocket {
                                         System.out.println("student assignment set");
                                         break;
                                     case "Course page":
-                                            username = scanFromFlutter.readLine();
-                                            student = findByUsername(username);
-                                            assert student != null;
-                                            if (student.getSemesters() != null) {
-                                                gson = new Gson();
-                                                List<Course> coursesList = student.getCurrentSemesters().getCourses();
+                                        username = scanFromFlutter.readLine();
+                                        student = findByUsername(username);
+                                        assert student != null;
+                                        if (student.getSemesters() != null) {
+                                            gson = new Gson();
+                                            List<Course> coursesList = new ArrayList<>();
+                                            try {
+                                                coursesList = student.getCurrentSemesters().getCourses();
                                                 for (Course j : coursesList) {
                                                     j.setTopStudentOfWeek();
                                                     j.setNumberOfRemainingAssignments();
                                                 }
-                                                JsonArray jsonArray = new JsonArray();
-                                                for(Course i: coursesList){
-                                                    jsonArray.add(i.toJson());
-                                                }
-                                                json = gson.toJson(jsonArray);
-                                                formatToFlutter.write(json + "\n");
+                                            } catch (NotFindCourseOfSemester | NotFindCurrentCourseException e) {
+                                                coursesList = new ArrayList<>();
                                             }
-                                            System.out.println("student Course page set");
+                                            JsonArray jsonArray = new JsonArray();
+                                            for (Course i : coursesList) {
+                                                jsonArray.add(i.toJson());
+                                            }
+                                            json = gson.toJson(jsonArray);
+                                            formatToFlutter.write(json + "\n");
+                                        }
+                                        System.out.println("student Course page set");
                                         break;
                                     case "finishTask":
                                         username = scanFromFlutter.readLine();
@@ -174,22 +181,24 @@ public class MultiSocket {
                                         json = scanFromFlutter.readLine();
                                         gson = new Gson();
                                         Assignment[] assignments1 = gson.fromJson(json, Assignment[].class);
-                                        //                                        for(Assignment j: assignments1){
-//                                            Assignment assignment = j;
-//                                            Assignment assignmentStatic= Assignment.findById(j.getId());
-//                                            assignmentStatic.updateIsActive(j.getActive());
-//                                            assignmentStatic.setEstimateTime(j.getEstimateTime());
-//                                            assignmentStatic.setDone(j.getDone());
-//                                            for (Course i : Course.getAllCourses()) {
-//                                                for (Assignment k : i.getAssignments()) {
-//                                                    if (k.getId().equals(assignment.getId())) {
-//                                                        k.updateIsActive(assignment.getActive());
-//                                                        k.setDone(assignment.getDone());
-//                                                        k.setEstimateTime(assignment.getEstimateTime());
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
+                                        for (Assignment j : assignments1) {
+                                            Assignment assignment = j;
+                                            Assignment assignmentStatic = Assignment.findById(j.getId());
+                                            assignmentStatic.updateIsActive(j.getActive());
+                                            assignmentStatic.setEstimateTime(j.getEstimateTime());
+                                            assignmentStatic.setDone(j.getDone());
+                                            for (Course i : Course.getAllCourses()) {
+                                                for (Assignment k : i.getAssignments()) {
+                                                    if (k.getId().equals(assignment.getId())) {
+                                                        k.updateIsActive(assignment.getActive());
+                                                        k.setDone(assignment.getDone());
+                                                        k.setEstimateTime(assignment.getEstimateTime());
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        System.out.println(Course.getAllCourses().getFirst().getAssignments());
+                                        System.out.println("---------------");
                                         Assignment.saveToDatabaseObject();
                                         Course.saveToDatabaseObject();
                                         Teacher.teacherUpdateDataBase();
@@ -200,26 +209,65 @@ public class MultiSocket {
                                         String courseCode = scanFromFlutter.readLine();
                                         username = scanFromFlutter.readLine();
                                         student = findByUsername(username);
+                                        boolean isRepeated = false;
                                         if (student != null) {
                                             try {
                                                 Course course = Course.findById(Integer.parseInt(courseCode));
-                                                loginAdmin.addStudentToCourse(student , course);
+                                                if (student.getCurrentSemesters() != null && student.getCurrentSemesters().getCourses() != null) {
+                                                    for (Course i : student.getCurrentSemesters().getCourses()) {
+                                                        if (i.getCourseCode().equals(course.getCourseCode())) {
+                                                          isRepeated = true;
+                                                        }
+                                                    }
+                                                }
+                                                if(isRepeated){
+                                                    formatToFlutter.write("repeated" + "\n");
+
+                                                }else {
+                                                loginAdmin.addTeacherToCourse(new Teacher(" " , " " , "s" , "a" , "10000" ) , course);
+                                                loginAdmin.addStudentToCourse(student, course);
+//                                                student.getCurrentSemesters().setNumberOfUnits(student.getCurrentSemesters().getNumberOfUnits() + course.getUnit());
                                                 formatToFlutter.write("true" + "\n");
+                                                }
                                             } catch (CourseISEmptyException | NotFindCourseOfSemester e) {
                                                 formatToFlutter.write("false" + "\n");
                                             } catch (NumberFormatException e) {
                                                 throw new RuntimeException(e);
                                             }
                                         }
+                                        Assignment.saveToDatabaseObject();
+                                        Course.saveToDatabaseObject();
+                                        Teacher.teacherUpdateDataBase();
+                                        Student.saveToDatabaseObject();
                                         break;
-                                    case "bestbadScore":
+                                    case "bestScore":
                                         username = scanFromFlutter.readLine();
                                         student = findByUsername(username);
-                                        if (student != null) {
-                                            Optional<Double> minOp = student.getCurrentSemesters().getScores().values().stream().min(Double::compareTo).get().describeConstable();
-                                            Optional<Double> maxOp = student.getCurrentSemesters().getScores().values().stream().max(Double::compareTo).get().describeConstable();
-                                            formatToFlutter.write(maxOp.map(Object::toString).orElse("0" + "\n"));
-                                            formatToFlutter.write(minOp.map(Object::toString).orElse("0" + "\n"));
+                                        try {
+                                            if (student != null && student.getCurrentSemesters().getScores() != null && student.getCurrentSemesters() != null) {
+                                                Optional<Double> maxOp = student.getCurrentSemesters().getScores().values().stream().max(Double::compareTo).flatMap(Double::describeConstable);
+                                                String max = maxOp.map(Object::toString).orElse("0.0" + "\n");
+                                                System.out.println(max);
+                                                formatToFlutter.write(max + "\n");
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            formatToFlutter.write("0.0" + "\n");
+                                        }
+                                        break;
+                                    case "badScore":
+                                        username = scanFromFlutter.readLine();
+                                        student = findByUsername(username);
+                                        try {
+                                            if (student != null && student.getCurrentSemesters().getScores() != null && student.getCurrentSemesters() != null) {
+                                                Optional<Double> minOp = student.getCurrentSemesters().getScores().values().stream().min(Double::compareTo).flatMap(Double::describeConstable);
+                                                String min = minOp.map(Object::toString).orElse("0.0" + "\n");
+                                                System.out.println(min);
+                                                formatToFlutter.write(min + "\n");
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            formatToFlutter.write("0.0" + "\n");
                                         }
                                         break;
                                 }

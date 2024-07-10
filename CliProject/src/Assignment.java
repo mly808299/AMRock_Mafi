@@ -47,6 +47,7 @@ public class Assignment implements Serializable{
                 teacherDatabaseObjects.writeObject(assignment);
                 teacherDatabaseObjects.flush();
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

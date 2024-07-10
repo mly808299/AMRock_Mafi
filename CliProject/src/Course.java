@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-class DateDeadLine implements Serializable{
+class DateDeadLine implements Serializable {
     int day;
     int month;
     int year;
@@ -26,6 +26,7 @@ class DateDeadLine implements Serializable{
                 "/" + year;
     }
 }
+
 public class Course implements Serializable {
     private static List<Course> allCourses = new ArrayList<>();
     private String topStudentOfWeek;
@@ -40,11 +41,12 @@ public class Course implements Serializable {
     private int unit;
     private String finalExamDate;
     private int numberOfRemainingAssignments = 0;
+
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("courseName", courseName);
         Gson gson = new Gson();
-        jsonObject.addProperty("teacherName", teacher == null ? " " : teacher.getFirstName()+" " + teacher.getLastName());
+        jsonObject.addProperty("teacherName", teacher == null ? " " : teacher.getFirstName() + " " + teacher.getLastName());
         jsonObject.addProperty("numberOfStudents", numberOfStudents);
         jsonObject.addProperty("assignmentsNumber", assignmentsNumber);
         jsonObject.addProperty("unit", unit);
@@ -59,7 +61,7 @@ public class Course implements Serializable {
     }
 
     public static void loadAllCourse() {
-                    allCourses.clear();
+        allCourses.clear();
         File file = new File("courseDatabaseObjects.ser");
         if (!file.exists()) {
             try {
@@ -74,15 +76,35 @@ public class Course implements Serializable {
                     Course course = (Course) objectReader.readObject();
                     allCourses.add(course);
                 }
-            }catch (IOException e) {
+            } catch (IOException e) {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
     }
+
     public static void saveToDatabaseObject() {
         try (FileOutputStream databaseObjects = new FileOutputStream(new File("courseDatabaseObjects.ser"));
              ObjectOutputStream teacherDatabaseObjects = new ObjectOutputStream(databaseObjects)) {
+            try {
+                if (allCourses != null) {
+                    for (Course i : allCourses) {
+                        if (i.getAssignments() != null) {
+                            List<Assignment> newAssignments = new ArrayList<>();
+                            for (Assignment k : i.getAssignments()) {
+                                newAssignments.add(Assignment.findById(k.getId()));
+                            }
+                            i.setAssignments(newAssignments);
+                        }
+//                        if (i.getRegisteredStudents() != null) {
+//                            for (Student k : i.getRegisteredStudents()) {
+//                                k = Student.findById(k.getId());
+//                            }
+//                        }
+                    }
+                }
+            } catch (AssignmentIsEmptyException | NotFindAssignmentException e) {
+            }
             for (Course course : allCourses) {
                 teacherDatabaseObjects.writeObject(course);
                 teacherDatabaseObjects.flush();
@@ -91,11 +113,12 @@ public class Course implements Serializable {
             throw new RuntimeException(e);
         }
     }
+
     public int getUnit() {
         return unit;
     }
 
-    public Course(String courseName, int unit, boolean isActive, int courseCode , String finalExamDate) throws DoublicateCourseException, NotFindCurrentCourseException {
+    public Course(String courseName, int unit, boolean isActive, int courseCode, String finalExamDate) throws DoublicateCourseException, NotFindCurrentCourseException {
         if (!allCourses.isEmpty()) {
             for (Course i : allCourses) {
                 if (i.courseName.equals(courseName) && i.unit == unit && i.isActive == isActive && i.getCourseCode() == courseCode)
@@ -111,7 +134,7 @@ public class Course implements Serializable {
         saveToDatabaseObject();
     }
 
-    public Course(String courseName, Teacher teacher, int unit, boolean isActive, int courseCode , String finalExamDate) throws DoublicateCourseException, InactiveCourseException, NotFindCurrentCourseException {
+    public Course(String courseName, Teacher teacher, int unit, boolean isActive, int courseCode, String finalExamDate) throws DoublicateCourseException, InactiveCourseException, NotFindCurrentCourseException {
         this(courseName, unit, isActive, courseCode, finalExamDate);
         setTeacher(teacher);
 
@@ -127,12 +150,13 @@ public class Course implements Serializable {
             }
         }
     }
+
     public void removeTeacher(Teacher teacher) throws InactiveCourseException {
         if (!isActive)
             throw new InactiveCourseException();
         this.teacher = null;
-        for (int i=Teacher.getAllTeachers().size()-1 ; i>=0 ; i--) {
-            if (Teacher.getAllTeachers().get(i).getId().equals(teacher.getId()) ) {
+        for (int i = Teacher.getAllTeachers().size() - 1; i >= 0; i--) {
+            if (Teacher.getAllTeachers().get(i).getId().equals(teacher.getId())) {
                 teacher.removeCurseOfTeacher(this);
             }
         }
@@ -199,7 +223,7 @@ public class Course implements Serializable {
         String topStudent = "";
         assert registeredStudents != null;
         registeredStudents.sort(comparator);
-            topStudent = registeredStudents.getFirst().getFirstName() + " " + registeredStudents.getFirst().getLastName();
+        topStudent = registeredStudents.getFirst().getFirstName() + " " + registeredStudents.getFirst().getLastName();
         return topStudent;
     }
 
@@ -222,27 +246,29 @@ public class Course implements Serializable {
     public Integer getCourseCode() {
         return courseCode;
     }
-    public Course() throws NotFindCurrentCourseException {}
+
+    public Course() throws NotFindCurrentCourseException {
+    }
 
     @Override
     public String toString() {
-        if(teacher == null){
-            return "Course{"+
+        if (teacher == null) {
+            return "Course{" +
                     "courseName='" + courseName + '\'' +
                     ", courseCode=" + courseCode +
                     ", isActive=" + isActive +
                     ", unit=" + unit +
                     ", finalExamDate=" + finalExamDate +
-                    ", teacherName=" +null+
+                    ", teacherName=" + null +
                     '}';
         }
-        return "Course{"+
+        return "Course{" +
                 "courseName='" + courseName + '\'' +
                 ", courseCode=" + courseCode +
                 ", isActive=" + isActive +
                 ", unit=" + unit +
                 ", finalExamDate=" + finalExamDate +
-                ", teacherName=" + teacher.getFirstName() + " " + teacher.getLastName() + ", teacher id="+ teacher.getId()+
+                ", teacherName=" + teacher.getFirstName() + " " + teacher.getLastName() + ", teacher id=" + teacher.getId() +
                 '}';
     }
 
@@ -291,16 +317,17 @@ public class Course implements Serializable {
     public Teacher getTeacher() {
         return teacher;
     }
+
     public static Course findById(Integer id) throws CourseISEmptyException, NotFindCourseOfSemester {
         if (Course.getAllCourses().isEmpty()) {
-           throw new CourseISEmptyException();
+            throw new CourseISEmptyException();
         } else {
             for (Course i : Course.getAllCourses()) {
                 if (i.getCourseCode().equals(id)) {
                     return i;
                 }
             }
-            throw new  NotFindCourseOfSemester();
+            throw new NotFindCourseOfSemester();
         }
     }
 
@@ -318,8 +345,8 @@ public class Course implements Serializable {
 
     public void setNumberOfRemainingAssignments() {
         int sum = 0;
-        for (Assignment i :assignments){
-            if(i.getActive() || !i.getDone()){
+        for (Assignment i : assignments) {
+            if (i.getActive() && !i.getDone()) {
                 sum++;
             }
         }

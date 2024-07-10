@@ -149,6 +149,7 @@ public class Admin extends Person {
         if(!course.getRegisteredStudents().contains(student)){
             throw new NotFindStudentInCourseException();
         }
+        System.out.println(course);
         teacher.setScore(newScore , studentId , course);
     }
 }

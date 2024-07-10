@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -12,7 +13,12 @@ public class Student extends Person
     private Double totalAverage = 0.0;
     private List<Tasks> tasks = new ArrayList<>();
     private Double averageOfRegisteredSemester = 0.0;
-    private int unit = 0;
+    private int unit  = 0;
+
+    public void setUnit() throws NotFindCourseOfSemester {
+        unit = getCurrentSemesters().getNumberOfUnits();
+    }
+
     public static void loadAllStudent() {
         allStudents.clear();
         File file = new File("studentDatabaseObjects.ser");
@@ -39,6 +45,33 @@ public class Student extends Person
     public static void saveToDatabaseObject() {
         try (FileOutputStream databaseObjects = new FileOutputStream(new File("studentDatabaseObjects.ser"));
              ObjectOutputStream teacherDatabaseObjects = new ObjectOutputStream(databaseObjects)) {
+            try {
+                if (allStudents != null) {
+//                    for (Student i : allStudents) {
+//                        if (i.getRegisteredCourses() != null) {
+//                            List<Course> newCourses = new ArrayList<>();
+//                            for (Course j : i.getRegisteredCourses()) {
+//                                newCourses.add(Course.findById(j.getCourseCode()));
+//                            }
+//                            i.getCurrentSemesters().setCourses(newCourses);
+//                        }
+//                    }
+                    for (Student i : allStudents) {
+                        if (i.getRegisteredCourses() != null) {
+                            for (Course j : i.getRegisteredCourses()) {
+                                if (j.getAssignments() != null) {
+                                    List<Assignment> newAssignments = new ArrayList<>();
+                                    for (Assignment k : j.getAssignments()) {
+                                        newAssignments.add(Assignment.findById(k.getId()));
+                                    }
+                                    j.setAssignments(newAssignments);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (AssignmentIsEmptyException | NotFindAssignmentException e) {
+            }
             for (Student student : allStudents) {
                 teacherDatabaseObjects.writeObject(student);
                 teacherDatabaseObjects.flush();
@@ -157,7 +190,7 @@ public class Student extends Person
     }
 
     public int registrationUnitstoInt() {
-        if(semesters.isEmpty()){
+        if (semesters.isEmpty()) {
             return 0;
         }
         return unit = semesters.get(this.numberOfCurrentSemester).getNumberOfUnits();
@@ -176,6 +209,9 @@ public class Student extends Person
     }
 
     public int numberOfCurrentCursesToInt() {
+        if (semesters.isEmpty()) {
+            return 0;
+        }
         return semesters.get(this.numberOfCurrentSemester).getNumberOfCourses();
     }
 
@@ -267,6 +303,7 @@ public class Student extends Person
                 ", numberOfCurrentSemester=" + numberOfCurrentSemester +
                 '}';
     }
+
     public String toJsonStudentFiled() throws DoublicateAssignmentException {
 //        setAssignments();
         Gson gson = new GsonBuilder().create();
