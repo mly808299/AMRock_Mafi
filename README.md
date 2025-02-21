@@ -2,6 +2,7 @@
 Ap_project
 Home Page
 Welcome to the student interface!  
+ali
 
 Student Information
 Name: [Student Name]
