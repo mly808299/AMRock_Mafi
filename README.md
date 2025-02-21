@@ -1,7 +1,7 @@
 # AMRock_Mafi
 Ap_project
 Home Page
-Welcome to the student interface!
+Welcome to the student interface!  
 
 Student Information
 Name: [Student Name]
